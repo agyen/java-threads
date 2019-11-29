@@ -1,28 +1,35 @@
 package io.turntabl.buffer;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.stream.IntStream;
+
 public class Producer extends Thread{
-CircularBuffer buffer;
+    CircularBuffer buffer;
     int bufferTam;
-    int contData;
+    int countData;
+    ArrayBlockingQueue<Integer> queue = new ArrayBlockingQueue<>(500);
 
     public Producer(CircularBuffer buff) {
         this.buffer = buff;
         this.bufferTam = buffer.array.length;
-        this.contData = 0;
+        this.countData = 0;
 
     }
 
     public void produceData() {
-        this.contData++;
-        this.buffer.writeData(contData);
+        this.countData++;
+        this.buffer.writeData(countData);
+        System.out.println(" produce data  " + countData + ": " );
+
     }
 
     public void run() {
-        for (int i = 0; i < 500; i++) {
-            while (this.buffer.nElem == this.bufferTam) {
+
+        IntStream.range(0, 20).forEach(i -> {
+            while (this.buffer.bufferLength == this.bufferTam) {
                 Thread.yield();
             }
             this.produceData();
-        }
+        });
     }
 }

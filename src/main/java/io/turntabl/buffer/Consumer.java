@@ -1,26 +1,31 @@
 package io.turntabl.buffer;
 
+import java.util.stream.IntStream;
+
 public class Consumer extends Thread {
-    CircularBuffer buffer;
-    int cont;
+    private CircularBuffer buffer;
+    private int count;
 
     public Consumer(CircularBuffer buff) {
         this.buffer = buff;
-        this.cont = 0;
+        this.count = 0;
     }
 
     public void consumeData() {
         int data = buffer.readData();
-        cont++;
-        System.out.println("data  " + cont + ": " + data);
+        count++;
+        System.out.println(" consume data  " + count + ": " + data);
     }
 
     public void run() {
-        for (int i = 0; i < 500; i++) {
-            while (this.buffer.nElem == 0) {
-                Thread.yield();
-            }
-            this.consumeData();
+        IntStream.range(0, 20).forEach(i -> {
+                    while (this.buffer.bufferLength == 0) {
+                        Thread.yield();
+                    }
+                    this.consumeData();
+                }
+
+                );
         }
     }
-}
+

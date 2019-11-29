@@ -5,8 +5,8 @@ import java.util.Random;
 public class Main {
     public static void main(String[] args) {
         Random ran = new Random();
-        int tamArray = ran.nextInt(21) + 1;
-        int[] array = new int[tamArray];
+        int tempArray = ran.nextInt(21) + 1;
+        int[] array = new int[tempArray];
 
         CircularBuffer buffer = new CircularBuffer(array);
 

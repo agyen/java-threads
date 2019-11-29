@@ -2,27 +2,32 @@ package io.turntabl.buffer;
 
 public class CircularBuffer {
     volatile int[] array;
-    volatile int p;
-    volatile int c;
-    volatile int nElem;
+    private volatile int end;
+    private volatile int front;
+    volatile int bufferLength;
+    private final Object lock = new Object();
 
     public CircularBuffer(int[] array) {
         this.array = array;
-        this.p = 0;
-        this.c = 0;
-        this.nElem = 0;
+        this.end = 0;
+        this.front = 0;
+        this.bufferLength = 0;
     }
 
-    public synchronized void writeData (int data) {
-        this.array[p] = data;
-        this.p = (p + 1) % array.length;
-        this.nElem++;
+    public void writeData (int data) {
+        synchronized (lock) {
+            this.array[end] = data;
+            this.end = (end + 1) % array.length;
+            this.bufferLength++;
+        }
     }
 
-    public synchronized int readData() {
-        int data = array[c];
-        this.c = (c + 1) % array.length;
-        this.nElem--;
-        return data;
+        public synchronized int readData() {
+            synchronized (lock) {
+                int data = array[front];
+                this.front = (front + 1) % array.length;
+                this.bufferLength--;
+                return data;
+            }
+        }
     }
-}
